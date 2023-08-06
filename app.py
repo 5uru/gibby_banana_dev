@@ -1,7 +1,6 @@
 import torch
 from potassium import Potassium, Request, Response
-from transformers import AutoTokenizer, AutoModelForCausalLM
-
+from transformers import pipeline
 app = Potassium("my_app")
 
 
@@ -9,20 +8,13 @@ app = Potassium("my_app")
 @app.init
 def init():
     model_name = "daryl149/Llama-2-7b-chat-hf"
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
-        use_cache="cache"
-    )
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=torch.bfloat16,
-        low_cpu_mem_usage=True,
-        use_cache="cache"
-    ).to("cuda")
+    device = 0 if torch.cuda.is_available() else -1
+    model = pipeline("text-generation", model=model_name, device=device)
+
     context = {
-        "model": model,
-        "tokenizer": tokenizer
+        "model": model
     }
+
     return context
 
 
@@ -35,21 +27,11 @@ def handler(context: dict, request: Request) -> Response:
     top_p = request.json.get("top_p", 0.92)
     top_k = request.json.get("top_k", 0)
 
-    tokenizer = context.get("tokenizer")
     model = context.get("model")
-
-    inputs = tokenizer.encode(prompt, return_tensors="pt").to("cuda")
-    outputs = model.generate(
-        inputs,
-        max_new_tokens=int(max_new_tokens),
-        do_sample=do_sample,
-        top_p=float(top_p),
-         top_k=int(top_k)
-    )
-    output = tokenizer.decode(outputs[0])
+    outputs = model(prompt, do_sample=do_sample, max_new_tokens=int(max_new_tokens), top_k=float(top_k), top_p=float(top_p))
 
     return Response(
-        json={"outputs": output},
+        json = {"outputs": outputs[0]},
         status=200
     )
 
