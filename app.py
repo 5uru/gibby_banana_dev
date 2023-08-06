@@ -7,9 +7,9 @@ app = Potassium("my_app")
 # @app.init runs at startup, and loads models into the app's context
 @app.init
 def init():
-    model_name = "mosaicml/mpt-7b-chat"
-    device = 0 if torch.cuda.is_available() else -1
-    model = pipeline("text-generation", model=model_name, device=device)
+    model_name = "databricks/dolly-v2-3b"
+    model = pipeline(model=model_name, torch_dtype=torch.bfloat16,
+    trust_remote_code=True, device_map="auto", return_full_text=True)
 
     context = {
         "model": model
