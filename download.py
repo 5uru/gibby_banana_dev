@@ -3,7 +3,7 @@
 from transformers import pipeline
 
 def download_model():
-    model_name = "daryl149/Llama-2-7b-chat-hf"
+    model_name = "mosaicml/mpt-7b-chat"
     pipeline("text-generation", model=model_name)
 
 if __name__ == "__main__":
