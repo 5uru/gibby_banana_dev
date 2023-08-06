@@ -8,7 +8,7 @@ app = Potassium("my_app")
 # @app.init runs at startup, and loads models into the app's context
 @app.init
 def init():
-    model_name = "togethercomputer/LLaMA-2-7B-32K"
+    model_name = "daryl149/Llama-2-7b-chat-hf"
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         use_cache="cache"

@@ -4,7 +4,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 def download_model():
-    model_name = "togethercomputer/LLaMA-2-7B-32K"
+    model_name = "daryl149/Llama-2-7b-chat-hf"
     # do a dry run of loading the huggingface model, which will download weights
     AutoTokenizer.from_pretrained(
         model_name,
